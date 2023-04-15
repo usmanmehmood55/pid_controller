@@ -1,0 +1,3 @@
+[submodule "ring_buffer"]
+	path = ring_buffer
+	url = https://github.com/usmanmehmood55/ring_buffer
