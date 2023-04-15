@@ -1,3 +1,15 @@
+/**
+ * @file    main.c
+ * @author  Usman Mehmood (usmanmehmood55@gmail.com)
+ * @brief   This file implements a PID controller
+ * 
+ * @version 0.1
+ * @date    15-04-2023
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
+
 #include <stdio.h>
 #include <math.h>
 #include "ring_buffer/ring_buffer.h"
@@ -10,12 +22,11 @@
  */
 typedef struct
 {
-    const double kP;              // proportional response weight constant
-    const double kI;              // integral response weight constant
-    const double kD;              // differential response weight constant
-    const double time;            // constant data sampling rate in milliseconds
-    ring_buffer  integral_accum;  // accumulator for holding integral responses
-    double       previous_error;  // previous error for calculating differential
+    const double kP;           // proportional response weight constant
+    const double kI;           // integral response weight constant
+    const double kD;           // differential response weight constant
+    const double time;         // constant data sampling rate in milliseconds
+    ring_buffer  error_accum;  // buffer for holding previous errors
 } pid_controller_t;
 
 
@@ -45,9 +56,9 @@ static double proportional(double error, pid_controller_t * p_pid)
  */
 static double integral(double error, pid_controller_t * p_pid)
 {
-    (void)ring_buffer_add(&p_pid->integral_accum, error);
+    (void)ring_buffer_add(&p_pid->error_accum, error);
     double sum = 0.0;
-    (void)ring_buffer_sum(&p_pid->integral_accum, &sum);
+    (void)ring_buffer_sum(&p_pid->error_accum, &sum);
     return sum;
 }
 
@@ -61,10 +72,14 @@ static double integral(double error, pid_controller_t * p_pid)
  */
 static double differential(double error, pid_controller_t * p_pid)
 {
-    double delta = error - p_pid->previous_error;
-    double diff = delta / p_pid->time;
+    double previous_error = 0.0;
+    uint16_t prev_error_index = 
+        (p_pid->error_accum.head == 0U) ? (p_pid->error_accum.size - 1U) : (p_pid->error_accum.head- 1U);
 
-    p_pid->previous_error = error;
+    (void)ring_buffer_get(&p_pid->error_accum, prev_error_index, &previous_error);
+
+    double delta = error - previous_error;
+    double diff = delta / p_pid->time;
 
     return diff;
 }
@@ -128,10 +143,10 @@ int main(void)
         .kI   = 0.1,
         .kD   = 0.1,
         .time = 100,
-        .previous_error = 0.0,
     };
 
-    (void)ring_buffer_create(&pid.integral_accum, 20U);
+    // initialize the error accumulator
+    (void)ring_buffer_create(&pid.error_accum, 30U);
 
     printf("\r%lf\n", output);
 
@@ -150,7 +165,8 @@ int main(void)
 
     printf("\rConverged in %d iterations\n", iterations);
 
-    (void)ring_buffer_destroy(&pid.integral_accum);
+    // release the memory used by error accumulator
+    (void)ring_buffer_destroy(&pid.error_accum);
 
     return 0;
 }
