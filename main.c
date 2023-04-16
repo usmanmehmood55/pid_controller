@@ -153,18 +153,18 @@ int main(void)
     // while convergence is not reached and iterations are within limit
     while ((fabs(goal - output) > 0.0001) && (iterations < 1000))
     {
-        // get the output by giving input to the transfer function
-        output = function(input);
+        // summing junction, error is added to input
+        input += error;
+        
+        // error + input is given to PID control function
+        pid_value = pid_compute(input, &pid);
 
-        // calculate the error based on output and goal
+        // PID value is given to transfer function to get output
+        output = function(pid_value);
+
+        // error is calculated from output
         error = goal - output;
 
-        // calculate the PID value based on the error
-        pid_value = pid_compute(error, &pid);
-
-        // add the PID value to the next input
-        input += pid_value;
-        
         printf("\r%lf\n", output);
 
         iterations++;
