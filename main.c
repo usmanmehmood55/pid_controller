@@ -26,7 +26,7 @@ typedef struct
     const double kI;           // integral response weight constant
     const double kD;           // differential response weight constant
     const double time;         // constant data sampling rate in milliseconds
-    ring_buffer  error_buffer;  // buffer for holding previous errors
+    ring_buffer  error_buffer; // buffer for holding previous errors
 } pid_controller_t;
 
 
@@ -139,9 +139,9 @@ int main(void)
     
     pid_controller_t pid =
     {
-        .kP   = 0.6,
-        .kI   = 0.1,
-        .kD   = 0.1,
+        .kP   = 0.5,
+        .kI   = 0.3,
+        .kD   = 0.3,
         .time = 100,
     };
 
@@ -151,7 +151,7 @@ int main(void)
     printf("\r%lf\n", output);
 
     // while convergence is not reached and iterations are within limit
-    while ((fabs(goal - output) > 0.0001) && (iterations < 1000))
+    while ((fabs(goal - output) > 0.000001) && (iterations < 1000))
     {
         // summing junction, error is added to input
         input += error;
