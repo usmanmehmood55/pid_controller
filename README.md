@@ -3,7 +3,7 @@
 This repository contains an implementation of a PID (Proportional-Integral-Differential)
 controller in C.
 
-A PID controller is a control loop feedback mechanism that is widely used in engineering
+A PID controller is a closed loop control system that is widely used in engineering
 applications for controlling continuous-time dynamic systems. The PID controller
 calculates an error value as the difference between a measured process variable and a
 desired set-point, then applies a control action based on proportional, integral, and
@@ -17,10 +17,10 @@ is modeled by a mathematical function.
 
 - Clone this repository.
 - Initialize the submodule by running `git submodule init` followed by `git submodule
-  update`. 
-  This will download the ring_buffer submodule from GitHub.
+  update`. This will download the ring_buffer submodule from GitHub.
 - Compile the program by running `make` in the terminal. This will generate an 
   executable file called `pid_controller.exe`.
+- All the PID related code in in [`main.c`](main.c)
 
 
 ## Implementation
@@ -51,18 +51,18 @@ The goal is to achieve a certain output value, and the PID controller is used to
 the input value to the system to reach that goal.
 
 ```
-┌───────┐                  ┌──────────────────┐                 ┌────────┐
-│       │                  │                  │                 │        │
-│ input ├──────►(+)───────►│     function     ├─────────o──────►│ output │
-│       │        ▲         │                  │         │       │        │
-└───────┘        │         └──────────────────┘         │       └────────┘
-                 │                                      │
-                 │                                      │
-                 │   ┌────────────────┐     ┌───────┐   │
-                 │   │                │     │       │   │
-                 └───┤ PID controller │◄────┤ error │◄──┘
-                     │                │     │       │
-                     └────────────────┘     └───────┘
+┌───────┐                     ┌──────────────────┐                  ┌────────┐
+│       │                     │                  │                  │        │
+│ input ├────────►(+)────────►│     function     ├────────o────────►│ output │
+│       │          ▲          │                  │        │         │        │
+└───────┘          │          └──────────────────┘        │         └────────┘
+                   │                                      │
+                   │                                      │
+                   │   ┌────────────────┐    ┌───────┐    │
+                   │   │                │    │       │    │
+                   └───┤ PID controller │◄───┤ error │◄───┘
+                       │                │    │       │
+                       └────────────────┘    └───────┘
 ```
 
 The PID weights and other parameters can be adjusted to control the behavior of the system.
