@@ -35,7 +35,7 @@ typedef struct
     const double kI;           // integral response weight constant
     const double kD;           // differential response weight constant
     const double time;         // constant data sampling rate in milliseconds
-    ring_buffer  error_accum;  // buffer for holding previous errors
+    ring_buffer  error_buffer; // buffer for holding previous errors
 } pid_controller_t;
 ```
 

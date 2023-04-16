@@ -26,7 +26,7 @@ typedef struct
     const double kI;           // integral response weight constant
     const double kD;           // differential response weight constant
     const double time;         // constant data sampling rate in milliseconds
-    ring_buffer  error_accum;  // buffer for holding previous errors
+    ring_buffer  error_buffer;  // buffer for holding previous errors
 } pid_controller_t;
 
 
@@ -56,9 +56,9 @@ static double proportional(double error, pid_controller_t * p_pid)
  */
 static double integral(double error, pid_controller_t * p_pid)
 {
-    (void)ring_buffer_add(&p_pid->error_accum, error);
+    (void)ring_buffer_add(&p_pid->error_buffer, error);
     double sum = 0.0;
-    (void)ring_buffer_sum(&p_pid->error_accum, &sum);
+    (void)ring_buffer_sum(&p_pid->error_buffer, &sum);
     return sum;
 }
 
@@ -74,9 +74,9 @@ static double differential(double error, pid_controller_t * p_pid)
 {
     double previous_error = 0.0;
     uint16_t prev_error_index = 
-        (p_pid->error_accum.head == 0U) ? (p_pid->error_accum.size - 1U) : (p_pid->error_accum.head- 1U);
+        (p_pid->error_buffer.head == 0U) ? (p_pid->error_buffer.size - 1U) : (p_pid->error_buffer.head- 1U);
 
-    (void)ring_buffer_get(&p_pid->error_accum, prev_error_index, &previous_error);
+    (void)ring_buffer_get(&p_pid->error_buffer, prev_error_index, &previous_error);
 
     double delta = error - previous_error;
     double diff = delta / p_pid->time;
@@ -145,17 +145,24 @@ int main(void)
         .time = 100,
     };
 
-    // initialize the error accumulator
-    (void)ring_buffer_create(&pid.error_accum, 30U);
+    // initialize the error buffer
+    (void)ring_buffer_create(&pid.error_buffer, 30U);
 
     printf("\r%lf\n", output);
 
     // while convergence is not reached and iterations are within limit
     while ((fabs(goal - output) > 0.0001) && (iterations < 1000))
     {
+        // get the output by giving input to the transfer function
         output = function(input);
+
+        // calculate the error based on output and goal
         error = goal - output;
+
+        // calculate the PID value based on the error
         pid_value = pid_compute(error, &pid);
+
+        // add the PID value to the next input
         input += pid_value;
         
         printf("\r%lf\n", output);
@@ -165,8 +172,8 @@ int main(void)
 
     printf("\rConverged in %d iterations\n", iterations);
 
-    // release the memory used by error accumulator
-    (void)ring_buffer_destroy(&pid.error_accum);
+    // release the memory used by error buffer
+    (void)ring_buffer_destroy(&pid.error_buffer);
 
     return 0;
 }
