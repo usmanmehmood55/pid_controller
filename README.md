@@ -51,18 +51,18 @@ The goal is to achieve a certain output value, and the PID controller is used to
 the input value to the system to reach that goal.
 
 ```
-┌───────┐                 ┌────────────────┐      ┌──────────────────┐              ┌────────┐
-│       │                 │                │      │                  │              │        │
-│ input ├──────►(+)──────►│ PID controller │─────►│     function     ├──────o──────►│ output │
-│       │        ▲        │                │      │                  │      │       │        │
-└───────┘        │        └────────────────┘      └──────────────────┘      │       └────────┘
-                 │                                                          │
-                 │                                                          │
-                 │                       ┌───────┐                          │
-                 │                       │       │                          │
-                 └───────────────────────┤ error │◄─────────────────────────┘
-                                         │       │
-                                         └───────┘
++-------+                 +----------------+      +------------------+              +--------+
+|       |                 |                |      |                  |              |        |
+| input +------>(+)------>| PID controller +----->|     function     +------o------>| output |
+|       |        ^        |                |      |                  |      |       |        |
++-------+        |        +----------------+      +------------------+      |       +--------+
+                 |                                                          |
+                 |                                                          |
+                 |                       +-------+                          |
+                 |                       |       |                          |
+                 +-----------------------+ error |<-------------------------+
+                                         |       |
+                                         +-------+
 ```
 
 The PID weights and other parameters can be adjusted to control the behavior of the system.
