@@ -74,7 +74,7 @@ static double differential(double error, pid_controller_t * p_pid)
 {
     double previous_error = 0.0;
     uint16_t prev_error_index = 
-        (p_pid->error_buffer.head == 0U) ? (p_pid->error_buffer.size - 1U) : (p_pid->error_buffer.head- 1U);
+        (p_pid->error_buffer.head == 0U) ? (p_pid->error_buffer.size - 1U) : (p_pid->error_buffer.head - 1U);
 
     (void)ring_buffer_get(&p_pid->error_buffer, prev_error_index, &previous_error);
 
@@ -155,7 +155,7 @@ int main(void)
     {
         // summing junction, error is added to input
         input += error;
-        
+
         // error + input is given to PID control function
         pid_value = pid_compute(input, &pid);
 
