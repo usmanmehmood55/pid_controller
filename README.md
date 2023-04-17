@@ -13,21 +13,54 @@ adjust the output in order to minimize the error over time.
 This code demonstrates a simple PID controller that can be used to control a system that
 is modeled by a mathematical function.
 
+
 ## Setup
 
-- Clone this repository.
-- Initialize the submodule by running `git submodule init` followed by `git submodule
-  update`. This will download the ring_buffer submodule from GitHub.
-- Compile the program by running `make` in the terminal. This will generate an 
+
+### Pre Requisites
+
+The required software to use this library are
+- [Git](https://git-scm.com/downloads)
+- [Make](https://gnuwin32.sourceforge.net/packages/make.htm)
+
+
+### Downloading and Compilation
+- Clone this repository using
+  ```bash
+  git clone https://github.com/usmanmehmood55/pid_controller.git
+  ```
+- Initialize the ring_buffer submodule by running
+  ```bash
+  git submodule init
+  git submodule update
+  ```
+- Compile the program by running `make` in the terminal. This will generate an
   executable file called `pid_controller.exe`.
-- All the PID related code in in [`main.c`](main.c)
+  ```bash
+  make
+  ```
+
+
+### Execution
+- Run the executable using
+  ```bash
+  ./pid_controller.exe
+  ```
+
+### Updating
+- Before updating be sure to save any changes that were made to the PID code as they
+  might get overwritten.
+- To get the latest code from this repository, simply `pull` from Git. 
+  ```bash
+  git pull
+  ```
 
 
 ## Implementation
-The PID controller is implemented as a struct named `pid_controller_t`. This struct
-contains the PID weights (proportional, integral, and differential response weight
-constants), the constant data sampling rate, and a ring buffer for holding previous
-errors. 
+All the PID related code in in [`main.c`](main.c). The PID controller is implemented
+as a struct named `pid_controller_t`. This struct contains the PID weights 
+(proportional, integral, and differential response weight constants), the constant
+data sampling rate, and a ring buffer for holding previous errors. 
 ```c
 typedef struct
 {
