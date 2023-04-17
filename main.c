@@ -14,12 +14,12 @@
 #include <math.h>
 #include "pid_control/pid_control.h"
 
-void set_input(double input)
+static double get_input(double input)
 {
-    __unused(input);
+    return input;
 }
 
-double transfer_function(double input)
+static double transfer_function(double input)
 {
     return (2.0 * input) + 1.0;
 }
@@ -32,9 +32,12 @@ int main(void)
         .kI   = 0.3,
         .kD   = 0.3,
         .time = 100,
-        .set_input         = set_input,
+        .get_input         = get_input,
         .transfer_function = transfer_function,
     };
+
+    double output = pid_controller(pid);
+    printf("\routput: %lf\n", output);
 
     return 0;
 }

@@ -27,7 +27,7 @@ typedef struct
     const double goal;         // goal / set-point for PID controller
     ring_buffer  error_buffer; // buffer for holding previous errors
 
-    void (*set_input)(double input);           // input function's pointer
+    double (*get_input)(double input);         // input function's pointer
     double (*transfer_function)(double input); // transfer function's pointer
 
 } pid_controller_t;

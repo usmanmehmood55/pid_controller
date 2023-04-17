@@ -117,6 +117,9 @@ double pid_controller(pid_controller_t pid)
     int iterations = 0;
     while ((fabs(goal - output) > 0.000001) && (iterations < 1000))
     {
+        // get input from the input function
+        input = pid.get_input(input);
+
         // summing junction, error is added to input
         input += error;
 
@@ -124,7 +127,7 @@ double pid_controller(pid_controller_t pid)
         pid_value = pid_compute(input, &pid);
 
         // PID value is given to transfer function to get output
-        output = transfer_function(pid_value);
+        output = pid.transfer_function(pid_value);
 
         // error is calculated from output
         error = goal - output;
