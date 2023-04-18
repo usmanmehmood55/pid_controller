@@ -29,9 +29,10 @@ int main(void)
     pid_controller_t pid =
     {
         .kP   = 0.5,
-        .kI   = 0.3,
+        .kI   = 0.4,
         .kD   = 0.3,
         .time = 100,
+        .goal = 200.0,
         .get_input         = get_input,
         .transfer_function = transfer_function,
     };

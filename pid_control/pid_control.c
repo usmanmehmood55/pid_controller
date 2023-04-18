@@ -101,12 +101,9 @@ double pid_compute(double error, pid_controller_t * p_pid)
 
 double pid_controller(pid_controller_t pid)
 {
-    
     double input     = 0.0;
-    double goal      = 5.0;
     double output    = 0.0;
     double error     = 0.0;
-    double pid_value = 0.0;
 
     // initialize the error buffer
     (void)ring_buffer_create(&pid.error_buffer, 30U);
@@ -115,7 +112,7 @@ double pid_controller(pid_controller_t pid)
 
     // while convergence is not reached and iterations are within limit
     int iterations = 0;
-    while ((fabs(goal - output) > 0.000001) && (iterations < 1000))
+    while ((fabs(pid.goal - output) > 0.000001) && (iterations < 1000))
     {
         // get input from the input function
         input = pid.get_input(input);
@@ -124,13 +121,13 @@ double pid_controller(pid_controller_t pid)
         input += error;
 
         // error + input is given to PID control function
-        pid_value = pid_compute(input, &pid);
+        double pid_value = pid_compute(input, &pid);
 
         // PID value is given to transfer function to get output
         output = pid.transfer_function(pid_value);
 
         // error is calculated from output
-        error = goal - output;
+        error = pid.goal - output;
 
         printf("\r%lf\n", output);
 
