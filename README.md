@@ -64,11 +64,11 @@ data sampling rate, and a ring buffer for holding previous errors.
 ```c
 typedef struct
 {
-    const double kP;           // proportional response weight constant
-    const double kI;           // integral response weight constant
-    const double kD;           // differential response weight constant
-    const double time;         // constant data sampling rate in milliseconds
-    ring_buffer  error_buffer; // buffer for holding previous errors
+    const double kP;                // proportional response weight constant
+    const double kI;                // integral response weight constant
+    const double kD;                // differential response weight constant
+    const double time;              // constant data sampling rate in milliseconds
+    ring_buffer_t * p_error_buffer; // pointer to buffer for holding previous errors
 } pid_controller_t;
 ```
 

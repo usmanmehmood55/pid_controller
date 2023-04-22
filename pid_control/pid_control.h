@@ -12,6 +12,7 @@
 
 #include <stdio.h>
 #include <math.h>
+#include <stdbool.h>
 #include "../ring_buffer/ring_buffer.h"
 
 /**
@@ -20,12 +21,12 @@
  */
 typedef struct
 {
-    const double kP;           // proportional response weight constant
-    const double kI;           // integral response weight constant
-    const double kD;           // differential response weight constant
-    const double time;         // constant data sampling rate in milliseconds
-    const double goal;         // goal / set-point for PID controller
-    ring_buffer  error_buffer; // buffer for holding previous errors
+    const double  kP;               // proportional response weight constant
+    const double  kI;               // integral response weight constant
+    const double  kD;               // differential response weight constant
+    const double  time;             // constant data sampling rate in milliseconds
+    const double  goal;             // goal / set-point for PID controller
+    ring_buffer_t * p_error_buffer; // buffer for holding previous errors
 
     double (*get_input)(double input);         // input function's pointer
     double (*transfer_function)(double input); // transfer function's pointer

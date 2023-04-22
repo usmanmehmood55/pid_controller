@@ -40,9 +40,9 @@ double proportional(double error, pid_controller_t * p_pid)
  */
 double integral(double error, pid_controller_t * p_pid)
 {
-    (void)ring_buffer_add(&p_pid->error_buffer, error);
+    (void)ring_buffer_add(p_pid->p_error_buffer, error);
     double sum = 0.0;
-    (void)ring_buffer_sum(&p_pid->error_buffer, &sum);
+    (void)ring_buffer_get_sum(p_pid->p_error_buffer, &sum);
     return sum;
 }
 
@@ -56,11 +56,17 @@ double integral(double error, pid_controller_t * p_pid)
  */
 double differential(double error, pid_controller_t * p_pid)
 {
-    double previous_error = 0.0;
-    uint16_t prev_error_index = 
-        (p_pid->error_buffer.head == 0U) ? (p_pid->error_buffer.size - 1U) : (p_pid->error_buffer.head - 1U);
+    double   previous_error   = 0.0;
+    uint16_t head_index       = 0U;
+    uint16_t size             = 0U;
+    uint16_t prev_error_index = 0U;
 
-    (void)ring_buffer_get(&p_pid->error_buffer, prev_error_index, &previous_error);
+    (void)ring_buffer_get_head_index(p_pid->p_error_buffer, &head_index);
+    (void)ring_buffer_get_size(p_pid->p_error_buffer, &size);
+
+    prev_error_index = (head_index == 0U) ? (uint16_t)(size - 1U) : (uint16_t)(head_index - 1U);
+
+    (void)ring_buffer_get_element(p_pid->p_error_buffer, prev_error_index, &previous_error);
 
     double delta = error - previous_error;
     double diff = delta / p_pid->time;
@@ -106,7 +112,7 @@ double pid_controller(pid_controller_t pid)
     double error     = 0.0;
 
     // initialize the error buffer
-    (void)ring_buffer_create(&pid.error_buffer, 30U);
+    (void)ring_buffer_create(&pid.p_error_buffer, 30U);
 
     printf("\r%lf\n", output);
 
@@ -137,7 +143,7 @@ double pid_controller(pid_controller_t pid)
     printf("\rConverged in %d iterations\n", iterations);
 
     // release the memory used by error buffer
-    // (void)ring_buffer_destroy(&pid.error_buffer);
+    // (void)ring_buffer_destroy(&pid.p_error_buffer);
 
     return output;
 }

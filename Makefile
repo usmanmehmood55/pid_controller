@@ -9,5 +9,8 @@ all: $(TARGET)
 $(TARGET): $(OBJFILES)
 	$(CC) $(CFLAGS) -o $(TARGET) $(OBJFILES) $(LDFLAGS)
 
-clean:
+fullclean:
 	rm -f $(OBJFILES) $(TARGET) *~
+
+clean:
+	rm -f $(OBJFILES) *~
