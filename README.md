@@ -60,15 +60,22 @@ The required software to use this library are
 All the PID related code in in [`main.c`](main.c). The PID controller is implemented
 as a struct named `pid_controller_t`. This struct contains the PID weights 
 (proportional, integral, and differential response weight constants), the constant
-data sampling rate, and a ring buffer for holding previous errors. 
+data sampling rate, a ring buffer for holding previous errors, a function for giving
+input to the PID controller, and a function to act as the transfer function of the
+system.
 ```c
 typedef struct
 {
-    const double kP;           // proportional response weight constant
-    const double kI;           // integral response weight constant
-    const double kD;           // differential response weight constant
-    const double time;         // constant data sampling rate in milliseconds
-    ring_buffer  error_buffer; // buffer for holding previous errors
+    const double  kP;               // proportional response weight constant
+    const double  kI;               // integral response weight constant
+    const double  kD;               // differential response weight constant
+    const double  time;             // constant data sampling rate in milliseconds
+    const double  goal;             // goal / set-point for PID controller
+    ring_buffer_t * p_error_buffer; // buffer for holding previous errors
+
+    double (*get_input)(double previous_input); // input function's pointer
+    double (*transfer_function)(double input);  // transfer function's pointer
+
 } pid_controller_t;
 ```
 
@@ -79,23 +86,23 @@ The following functions are used for PID computation:
 - `differential`: calculates the differential response
 - `pid_compute`: calculates the PID response based on those responses
 
-In the function named `function`, a mathematical function is used to simulate a system. 
-The goal is to achieve a certain output value, and the PID controller is used to adjust
-the input value to the system to reach that goal.
+In the function named `transfer_function`, a mathematical function is used to simulate 
+a system. The goal is to achieve a certain output value, and the PID controller is used
+to adjust the input value to the system to reach that goal.
 
 ```
-+-------+                 +----------------+      +------------------+              +--------+
-|       |                 |                |      |                  |              |        |
-| input |------>(+)------>| PID controller |----->|     function     |------o------>| output |
-|       |        ^        |                |      |                  |      |       |        |
-+-------+        |        +----------------+      +------------------+      |       +--------+
-                 |                                                          |
-                 |                                                          |
-                 |                       +-------+                          |
-                 |                       |       |                          |
-                 +-----------------------| error |<-------------------------+
-                                         |       |
-                                         +-------+
++-------+                 +----------------+      +-------------------+              +--------+
+|       |                 |                |      |                   |              |        |
+| input |------>(+)------>| PID controller |----->| transfer_function |------o------>| output |
+|       |        ^        |                |      |                   |      |       |        |
++-------+        |        +----------------+      +-------------------+      |       +--------+
+                 |                                                           |
+                 |                                                           |
+                 |                         +-------+                         |
+                 |                         |       |                         |
+                 +-------------------------| error |<------------------------+
+                                           |       |
+                                           +-------+
 ```
 
 The PID weights and other parameters can be adjusted to control the behavior of the system.
