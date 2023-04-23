@@ -12,7 +12,8 @@
 
 #include "pid_control.h"
 
-#define UNUSED (void)
+#define UNUSED (void)        // helper macro for MISRA checks
+#define printf (void)printf  // helper macro for MISRA checks
 
 /**
  * @brief Calculates the proportional response
@@ -143,7 +144,7 @@ double pid_controller(pid_controller_t pid)
     printf("\rConverged in %d iterations\n", iterations);
 
     // release the memory used by error buffer
-    // (void)ring_buffer_destroy(&pid.p_error_buffer);
+    (void)ring_buffer_destroy(&pid.p_error_buffer);
 
     return output;
 }
