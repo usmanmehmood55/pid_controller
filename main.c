@@ -14,9 +14,9 @@
 #include <math.h>
 #include "pid_control/pid_control.h"
 
-static double get_input(double input)
+static double get_input(double previous_input)
 {
-    return input;
+    return previous_input;
 }
 
 static double transfer_function(double input)
