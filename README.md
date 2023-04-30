@@ -57,7 +57,8 @@ The required software to use this library are
 
 
 ## Implementation
-All the PID related code in in [`main.c`](main.c). The PID controller is implemented
+All the PID related code in in [`pid_control.c`](pid_control/pid_control.c) and 
+[`pid_control.h`](pid_control/pid_control.h). The PID controller is implemented
 as a struct named `pid_controller_t`. This struct contains the PID weights 
 (proportional, integral, and differential response weight constants), the constant
 data sampling rate, a ring buffer for holding previous errors, a function for giving
